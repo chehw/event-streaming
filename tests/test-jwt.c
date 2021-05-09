@@ -25,6 +25,23 @@
  * 
  */
 
+/** 
+ * # build: 
+ * $ cd ${project_dir}
+ * 
+ * ## auto generate a RSA key-pair (if not exists) for testing
+ * $ tests/make.sh test-jwt
+ * 
+ * # run:
+ * ## (first time) generate a jwt object and output to a file
+ * $ tests/test-jwt gen
+ * 
+ * ## test verify
+ * $ tests/test-jwt
+ * 
+ * # check memory leaks:
+ * $ valgrind --leak-check=full tests/test-jwt
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -61,21 +78,16 @@ static const char * jwt_registered_claims[] = {
 };
 
 
-#define OUTPUT_JWT_FILE "tests/test-response.jwt"
+#define OUTPUT_JWT_FILE 	"tests/test-response.jwt"
+#define SECKEY_FILE 		"seckey.pem"
+#define PUBKEY_FILE 		"seckey_pub.pem"
+
 int test_generate(const char * privkey_file);
 int test_verify(const char * pubkey_file);
 
 int main(int argc, char **argv)
 {
-	//~ SSL_library_init();
-	//~ ERR_load_crypto_strings();
-	
-	//~ OpenSSL_add_ssl_algorithms();
-	//~ OpenSSL_add_all_ciphers();
-
-	//~ SSL_load_error_strings();
-	
-	if(argc > 1) test_generate(NULL);
+	if(argc > 1) test_generate(NULL); 
 	test_verify(NULL);
 	return 0;
 }
@@ -121,8 +133,8 @@ ssize_t load_file_data(const char * filename, unsigned char ** p_data)
 
 int test_generate(const char * seckey_file)
 {
-	fprintf(stderr, "==== %s(%s) ====\n", __FUNCTION__, seckey_file);
-	if(NULL == seckey_file) seckey_file = "seckey.pem";
+	if(NULL == seckey_file) seckey_file = SECKEY_FILE;
+	fprintf(stderr, "==== %s(key=[%s]) ====\n", __FUNCTION__, seckey_file);
 	
 	jwt_alg_t alg = JWT_ALG_RS256;
 	jwt_t * jwt = NULL;
@@ -168,8 +180,8 @@ int test_generate(const char * seckey_file)
 
 int test_verify(const char * pubkey_file)
 {
-	fprintf(stderr, "==== %s(%s) ====\n", __FUNCTION__, pubkey_file);
-	if(NULL == pubkey_file) pubkey_file = "seckey_pub.pem";
+	if(NULL == pubkey_file) pubkey_file = PUBKEY_FILE;
+	fprintf(stderr, "==== %s(key=[%s]) ====\n", __FUNCTION__, pubkey_file);
 	int ret = 0;
 	
 	AUTO_FREE_PTR unsigned char * pubkey = NULL;

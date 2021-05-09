@@ -19,9 +19,9 @@ mkdir -p obj/utils bin
 [ $? -ne 0 ] && exit 1
 
 # install libdb5.3-dev
-LIBDB_DEVFILE="libdb-5.3-dev"
+LIBDB_DEVFILE="libdb5.3-dev"
 if [ ! -e /usr/include/db.h ] ; then
-    echo "install libdb5.3-dev ..."
+    echo "install '${LIBDB_DEVFILE}' ..."
     ${PKG_MGR} install ${LIBDB_DEVFILE}
     [ $? -ne 0 ] && exit 1
 fi
