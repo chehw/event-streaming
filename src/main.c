@@ -58,8 +58,9 @@ typedef struct global_params
 	DB * sdbp;	// secondary db (indexed by timestamps)
 }global_params_t;
 
-
-static void on_document_root(SoupServer * server, SoupMessage *msg, const char * path, GHashTable * query, SoupClientContext * client, gpointer user_data);
+static void on_document_root(SoupServer * server, SoupMessage *msg, 
+	const char * path, GHashTable * query, 
+	SoupClientContext * client, gpointer user_data);
 int main(int argc, char **argv)
 {
 	int rc = 0;

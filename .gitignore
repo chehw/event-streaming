@@ -1,3 +1,10 @@
+# no extension name
+*
+!Makefile
+!*.*
+!src
+!tests
+
 # Prerequisites
 *.d
 
@@ -50,3 +57,15 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# project 
+backup/*
+docs/*
+*.bak
+*.log*
+tests/*
+!tests/make.sh
+!tests/*.c
+!tests/*.h
+!.gitignore
+!*.sh

@@ -12,12 +12,19 @@ module_devfiles=(
 PKG_MGR="sudo apt-get -y "
 PKG_CONFIG=$(which pkg-config)
 if [ -z "$PKG_CONFIG" ]; then
-    $PKG_MGR install build-essential
+    ${PKG_MGR} install build-essential
 fi
 
 mkdir -p obj/utils bin
 [ $? -ne 0 ] && exit 1
 
+# install libdb5.3-dev
+LIBDB_DEVFILE="libdb-5.3-dev"
+if [ ! -e /usr/include/db.h ] ; then
+    echo "install libdb5.3-dev ..."
+    ${PKG_MGR} install ${LIBDB_DEVFILE}
+    [ $? -ne 0 ] && exit 1
+fi
 
 for mod in ${!module_devfiles[@]}
 do
@@ -39,4 +46,3 @@ do
         [ $ret -ne 0 ] && exit $ret
     fi
 done
-

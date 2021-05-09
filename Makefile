@@ -61,4 +61,3 @@ do_init:
 clean:
 	rm -f $(OBJ_DIR)/*.o $(TARGET)
 
-
