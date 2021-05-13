@@ -79,12 +79,12 @@ typedef struct events_agency
 {
 	void * priv;
 	void * user_data;
-	
+
 	char * bootstap_broker_uri;	// default broker
 	char * topic;				// default topic
 	json_object * jconfig;
 	int (* load_config)(struct events_agency * eva, /* const */ json_object * jconfig);
-	
+
 	struct events_topic_context * (* find_topic)(struct events_agency * eva, const char * broker, const char * topic);
 	struct events_topic_context * (* subscribe)(struct events_agency * eva, const char * broker, const char * topic, events_topic_on_notify_fn on_notify, void * notify_data, void (* on_free_data)(void *));
 	int (* unsubscribe)(struct events_agency * eva, const char * broker, const char * topic);

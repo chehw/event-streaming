@@ -64,8 +64,12 @@ docs/*
 *.bak
 *.log*
 tests/*
+!include
 !tests/make.sh
 !tests/*.c
 !tests/*.h
 !.gitignore
+!utils
+!utils/*.c
+!utils/*.h
 !*.sh

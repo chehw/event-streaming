@@ -184,12 +184,12 @@ static events_topic_context * events_agency_find_topic(struct events_agency * ev
 {
 	assert(eva && eva->priv);
 	struct events_agency_private * priv = eva->priv;
-	
+
 	struct events_topic_context pattern[1] = {{
 		.broker = (char *)broker,
 		.topic = (char *)topic,
 	}};
-	
+
 	void * p_node = tfind(pattern, &priv->events_root, events_topic_compare);
 	if(p_node) return *(void **)p_node;
 	return NULL;
@@ -222,10 +222,10 @@ static struct events_topic_context * events_agency_subscribe(struct events_agenc
 	eva_topic->on_notify = on_notify;
 	eva_topic->notify_data = notify_data;
 	eva_topic->on_free_data = on_free_data;
-	
+
 	void * p_node = tsearch(eva_topic, &priv->events_root, events_topic_compare);
 	assert(p_node && *(void **)p_node == (void *)eva_topic);
-	
+
 	return eva_topic;
 }
 
@@ -248,17 +248,17 @@ struct events_agency * events_agency_init(struct events_agency * eva, void * use
 		eva = calloc(1, sizeof(*eva));
 		assert(eva);
 	}
-	
+
 	eva->user_data = user_data;
 	eva->load_config = events_agency_load_config;
-	
+
 	eva->find_topic = events_agency_find_topic;
 	eva->subscribe = events_agency_subscribe;
 	eva->unsubscribe = events_agency_unscribe;
 
 	struct events_agency_private * priv = events_agency_private_new(eva);
 	assert(priv && eva->priv == priv);
-	
+
 	return eva;
 }
 
