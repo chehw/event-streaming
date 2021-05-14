@@ -25,12 +25,17 @@ if [ ! -e "${SECKEY_FILE}_pub.pem" ] ; then
 	openssl rsa -in ${SECKEY_FILE}.pem -pubout -out ${SECKEY_FILE}_pub.pem
 fi
 
+make clean
+
 case "$target" in 
 	test-jwt)
 		echo "build ${target} ..."
 		${CC} -o tests/${target} \
 			tests/test-jwt.c \
 			-lm -lpthread -ljwt -luuid
+		;;
+	email-sender|email-sender-libcurl|test-email-sender)
+		CURL_VERBOSE=1 make test-email-sender
 		;;
 	*)
 		echo "build nothing."
