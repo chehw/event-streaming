@@ -78,6 +78,13 @@ void email_address_data_free(struct email_address_data * addr);
  * @}
 **/
 
+
+enum email_address_duplicates_policy // if duplicate addresses found in ( TO, CC, BCC )
+{
+	email_address_duplicates_discard,
+	email_address_duplicates_replace_with_latest
+};
+
 /**
  * @ingroup email_sender
  * @defgroup address_list
@@ -88,6 +95,7 @@ struct email_address_list
 	void * user_data;
 	struct email_address_data mail_from_addr[1];
 	
+	enum email_address_duplicates_policy dup_policy;
 	size_t max_size;
 	size_t num_recipients;
 	struct email_address_data ** recipients_addrs; // malloc and store all types of recipients_addrs ( TO, CC, BCC )

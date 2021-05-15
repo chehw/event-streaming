@@ -118,7 +118,11 @@ static int email_address_list_add(struct email_address_list * list, enum email_a
 		return -1;
 	}
 	
-	if(*(void **)p_node != (void *)recipient) { // already exists, duplicated address
+	struct email_address_data * current = *(void **)p_node;
+	if(current != (void *)recipient) { // duplicate address found
+		if(list->dup_policy == email_address_duplicates_replace_with_latest) {	// old records in the list can be replaced with the latest value
+			*current = *recipient; // can be assigned directly (since no internal pointers within [struct email_address_data]) 
+		}
 		email_address_data_free(recipient);
 		return 1;
 	}
@@ -200,9 +204,9 @@ static int  email_header_add(struct email_header * hdr, const char * key, const 
 	void * p_node = avl_tree_add(hdr->root, kvp, skey_value_pair_compare);
 	assert(p_node);
 	
-	skey_value_pair_t * p_current = *(void **)p_node;
-	if( p_current != (void *)kvp) { // replace 
-		skey_value_pair_replace_value(p_current, kvp->value, kvp->cb_value);
+	skey_value_pair_t * current = *(void **)p_node;
+	if( current != (void *)kvp) { // dup found, ALWAYS replace with the latest value
+		skey_value_pair_replace_value(current, kvp->value, kvp->cb_value);	
 		kvp->value = NULL;
 		skey_value_pair_free(kvp);
 	}else { // add new
