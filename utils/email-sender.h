@@ -173,17 +173,18 @@ struct email_sender_context
 	
 	// public functions for email headers and body
 	int (* add_header)(struct email_sender_context * email, const char * key, const char * value); // add key-value pairs
-	
-	/**
-	 * add_body()
-	 * @brief Add large blocks of DATA.
-	 * According to rfc2821, any "." that in the body will be escaped as ".."
-	 */
 	int (* add_body)(struct email_sender_context * email, const char * body, size_t cb_body);
-	
 	void (* clear)(struct email_sender_context * email);	// remove all lines
 	
 	// utils
+	/**
+	 * prepare_payload()
+	 * @brief generate SMTP DATA block
+	 * According to rfc2821, any "." in the body will be escaped as ".."
+	 * 
+	 * Many libraries would do this trick underneath,
+	 * set the 'escape_dot_char' flag to 1 if need to control manually.
+	 */
 	int (* prepare_payload)(struct email_sender_context * email, 
 		int escape_dot_char,	// 0: do not escape, the backend user-agent would do the trick;   1: need to escape '.' manually
 		auto_buffer_t * payload, const struct timespec * timestamp);
