@@ -65,9 +65,15 @@ const char * email_address_type_to_string(enum email_address_type type);
 
 struct email_address_data
 {
-	char addr[EMAIL_ADDRESS_MAX_LENGTH];
+	char addr[EMAIL_ADDRESS_MAX_LENGTH];	// format:  display_name (comment) <email_addr>
 	int cb_addr;
 	enum email_address_type type;
+	
+	///< email_addr: The part enclosed by "<" and ">". If there is no'<' character in addr, then the entire addr would be regarded as email_addr
+	char email_addr[EMAIL_ADDRESS_MAX_LENGTH]; 	
+	
+	char display_name[EMAIL_ADDRESS_MAX_LENGTH]; 	// nullable
+	char comment[EMAIL_ADDRESS_MAX_LENGTH];			// The part enclosed by "(" and ")", nullable
 };
 struct email_address_data * email_address_data_set(
 	struct email_address_data * email_addr, 
@@ -167,11 +173,20 @@ struct email_sender_context
 	
 	// public functions for email headers and body
 	int (* add_header)(struct email_sender_context * email, const char * key, const char * value); // add key-value pairs
-	int (* add_body)(struct email_sender_context * email, const char * body, size_t cb_body); // add large blocks of data
+	
+	/**
+	 * add_body()
+	 * @brief Add large blocks of DATA.
+	 * According to rfc2821, any "." that in the body will be escaped as ".."
+	 */
+	int (* add_body)(struct email_sender_context * email, const char * body, size_t cb_body);
+	
 	void (* clear)(struct email_sender_context * email);	// remove all lines
 	
 	// utils
-	int (* prepare_payload)(struct email_sender_context * email, auto_buffer_t * payload, const struct timespec * timestamp);
+	int (* prepare_payload)(struct email_sender_context * email, 
+		int escape_dot_char,	// 0: do not escape, the backend user-agent would do the trick;   1: need to escape '.' manually
+		auto_buffer_t * payload, const struct timespec * timestamp);
 	
 	// virtual functions, overidable
 	int (* send)(struct email_sender_context * email);

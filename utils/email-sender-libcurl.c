@@ -168,7 +168,7 @@ static int email_libcurl_send(struct email_sender_context * email)
 	 * prepare email payload and serialized to priv->payload, 
 	 * since the offset need to be modified during the curl library processing
 	 */
-	ret = email->prepare_payload(email, priv->payload, NULL);
+	ret = email->prepare_payload(email, 0, priv->payload, NULL);
 	assert(0 == ret);
 	
 	ret = curl_easy_setopt(curl, CURLOPT_READFUNCTION, on_read_data);

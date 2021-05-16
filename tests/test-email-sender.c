@@ -80,16 +80,23 @@ int main(int argc, char **argv)
 		
 	email->add_header(email, "Reply-to", "admin@nour.global");
 	email->add_header(email, "subject", "test 1");
+	email->add_header(email, "Content-Type", "text/plain");	
 	
-	email->add_body(email, "hello world", -1);
+	email->add_body(email, "hello world\r\n", -1);
+	email->add_body(email, "line 1.\r\n", -1);
+	email->add_body(email, "line 2..\r\n", -1);
 	
-	email->prepare_payload(email, email->payload, NULL);
+	email->prepare_payload(email, 0, email->payload, NULL);
 	email_sender_context_dump(email);
 	
 	rc = email->send(email);
 	fprintf(stderr, "email->send(): rc = %d\n", rc);
 	
 	email->clear(email);
+	
+	// TODO: test send attachment
+	// ...
+	
 	email_sender_context_cleanup(email);
 	free(email);
 	

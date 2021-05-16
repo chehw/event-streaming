@@ -384,7 +384,9 @@ static int append_key_value_pairs(const char * key, const char * value, void * u
 	rc = auto_buffer_push(payload, "\r\n", 2);
 	return rc;
 }
-static int email_prepare_payload(struct email_sender_context * email, auto_buffer_t * payload, const struct timespec * timestamp)
+static int email_prepare_payload(struct email_sender_context * email, 
+	int escape_dot_char,
+	auto_buffer_t * payload, const struct timespec * timestamp)
 {
 	assert(email && payload);
 	int rc = 0;
@@ -471,7 +473,20 @@ static int email_prepare_payload(struct email_sender_context * email, auto_buffe
 	// append body
 	auto_buffer_t * body = email->body;
 	if(body->length > 0) {
-		auto_buffer_push(payload, body->data, body->length);
+		const char * p = (const char *)body->data;
+		const char * p_end = p + body->length;
+			
+		if(escape_dot_char) {
+			char * dot_char = strchr(p, '.');
+			while(p < p_end && dot_char) {
+				auto_buffer_push(payload, p, dot_char - p);
+				auto_buffer_push(payload, "..", 2);
+				
+				p = dot_char + 1;
+				dot_char = strchr(p, '.');
+			}
+		}
+		if(p < p_end) auto_buffer_push(payload, p, p_end - p);
 	}
 	
 	auto_buffer_cleanup(to_addrs);
